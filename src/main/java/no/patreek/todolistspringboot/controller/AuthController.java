@@ -33,6 +33,4 @@ public class AuthController {
         }
     }
 
-    // Spring Security håndterer login automatisk via /login
-    // Ingen behov for egen login-endpoint
 }
