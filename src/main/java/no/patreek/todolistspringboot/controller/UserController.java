@@ -8,31 +8,32 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth")
-public class AuthController {
+@RequestMapping("/api/users")
+public class UserController {
 
     private final UserService userService;
 
-    public AuthController(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
+    // DTO for innkommende register-forespørsel
     public static class RegisterRequest {
         public String username;
-        public String password;
         public String email;
+        public String password;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest request) {
         try {
             User newUser = userService.registerUser(request.username, request.email, request.password);
+
+            // Returner JSON med suksessmelding
             return ResponseEntity.ok(Map.of("message", "Bruker opprettet: " + newUser.getUsername()));
         } catch (Exception e) {
+            // Returner JSON med feilmelding og status 400 (Bad Request)
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
-
-    // Spring Security håndterer login automatisk via /login
-    // Ingen behov for egen login-endpoint
 }

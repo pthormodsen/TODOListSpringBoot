@@ -1,8 +1,13 @@
 package no.patreek.todolistspringboot.service;
 
 import no.patreek.todolistspringboot.model.Task;
+import no.patreek.todolistspringboot.model.User;
 import no.patreek.todolistspringboot.repository.TaskRepository;
+import no.patreek.todolistspringboot.repository.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,18 +16,29 @@ import java.util.Optional;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
+    }
+
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Bruker ikke funnet: " + username));
     }
 
     public Task addTask(String description) {
-        Task task = new Task(description);
+        User currentUser = getCurrentUser();
+        Task task = new Task(description, currentUser);
         return taskRepository.save(task);
     }
 
     public void markTaskDoneById(Long id) {
-        Optional<Task> optionalTask = taskRepository.findById(id);
+        User currentUser = getCurrentUser();
+        Optional<Task> optionalTask = taskRepository.findByIdAndUser(id, currentUser);
         optionalTask.ifPresent(task -> {
             if (!task.isCompleted()) {
                 task.markDone();
@@ -31,16 +47,20 @@ public class TaskService {
         });
     }
 
+    @Transactional
     public void removeTaskById(Long id) {
-        taskRepository.deleteById(id);
+        User currentUser = getCurrentUser();
+        taskRepository.deleteByIdAndUser(id, currentUser);
     }
 
     public List<Task> getTasks() {
-        return taskRepository.findAllByOrderByCompletedAscDescriptionAsc();
+        User currentUser = getCurrentUser();
+        return taskRepository.findByUserOrderByCompletedAscDescriptionAsc(currentUser);
     }
 
     public void markTaskUndoneById(Long id) {
-        Optional<Task> optionalTask = taskRepository.findById(id);
+        User currentUser = getCurrentUser();
+        Optional<Task> optionalTask = taskRepository.findByIdAndUser(id, currentUser);
         optionalTask.ifPresent(task -> {
             task.setCompleted(false);
             taskRepository.save(task);
@@ -48,7 +68,8 @@ public class TaskService {
     }
 
     public void updateTaskDescription(Long id, String newDescription) {
-        Optional<Task> optionalTask = taskRepository.findById(id);
+        User currentUser = getCurrentUser();
+        Optional<Task> optionalTask = taskRepository.findByIdAndUser(id, currentUser);
         optionalTask.ifPresent(task -> {
             task.setDescription(newDescription);
             taskRepository.save(task);

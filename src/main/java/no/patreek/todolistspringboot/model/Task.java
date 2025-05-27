@@ -11,14 +11,23 @@ public class Task {
     private Long id;
 
     private String description;
-
     private boolean completed;
+
+    @ManyToOne//(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public Task() {}
 
     public Task(String description) {
         this.description = description;
         this.completed = false; // default verdi
+    }
+
+    public Task(String description, User user) {
+        this.description = description;
+        this.completed = false;
+        this.user = user;
     }
 
     public Task(String description, boolean completed) {
@@ -30,6 +39,14 @@ public class Task {
 
     public Long getId() {
         return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public void markDone() {
@@ -57,9 +74,4 @@ public class Task {
         String status = completed ? "\u2713" : "\u25A1";  // ✓ eller □
         return String.format("%s  %s", status, description);
     }
-
-
-
-
-
 }

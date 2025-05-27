@@ -1,46 +1,46 @@
--- Create the database
-CREATE
-DATABASE tododb;
-
--- Connect to the new database (run this in psql after creating the DB)
-\c
-tododb;
-
--- Create schema named 'todo' (helps organize tables)
-CREATE SCHEMA IF NOT EXISTS todo;
-
--- Create table 'task' inside 'todo' schema
-CREATE TABLE todo.task
-(
-    id          SERIAL PRIMARY KEY,
-    description VARCHAR(255) NOT NULL,
-    completed   BOOLEAN      NOT NULL DEFAULT FALSE
-);
-
--- Insert sample tasks
-INSERT INTO todo.task (description, completed)
-VALUES ('Buy groceries', FALSE),
-       ('Call mom', TRUE),
-       ('Finish Java assignment', FALSE),
-       ('Pay electricity bill', TRUE),
-       ('Book dentist appointment', FALSE),
-       ('Clean the house', FALSE),
-       ('Prepare dinner', TRUE),
-       ('Walk the dog', FALSE),
-       ('Read 30 pages of a book', FALSE),
-       ('Reply to work emails', TRUE);
-
--- Create 'users' table inside 'todo' schema
-CREATE TABLE todo.users
-(
-    id            SERIAL PRIMARY KEY,
-    username      VARCHAR(50) UNIQUE  NOT NULL,
-    email         VARCHAR(100) UNIQUE NOT NULL,
-    password_hash VARCHAR(255)        NOT NULL,
-    created_at    TIMESTAMP WITH TIME ZONE     DEFAULT CURRENT_TIMESTAMP,
-    enabled       BOOLEAN             NOT NULL DEFAULT TRUE
-);
-
--- Optional: insert a test user (password should be hashed in your app)
-INSERT INTO todo.users (username, email, password_hash)
-VALUES ('testuser', 'test@example.com', 'hashed_password_here');
+-- -- Create the database
+-- CREATE
+-- DATABASE tododb;
+--
+-- -- Connect to the new database (run this in psql after creating the DB)
+-- \c
+-- tododb;
+--
+-- -- Create schema named 'todo' (helps organize tables)
+-- CREATE SCHEMA IF NOT EXISTS todo;
+--
+-- -- Create table 'task' inside 'todo' schema
+-- CREATE TABLE todo.task
+-- (
+--     id          SERIAL PRIMARY KEY,
+--     description VARCHAR(255) NOT NULL,
+--     completed   BOOLEAN      NOT NULL DEFAULT FALSE
+-- );
+--
+-- -- Insert sample tasks
+-- INSERT INTO todo.task (description, completed)
+-- VALUES ('Buy groceries', FALSE),
+--        ('Call mom', TRUE),
+--        ('Finish Java assignment', FALSE),
+--        ('Pay electricity bill', TRUE),
+--        ('Book dentist appointment', FALSE),
+--        ('Clean the house', FALSE),
+--        ('Prepare dinner', TRUE),
+--        ('Walk the dog', FALSE),
+--        ('Read 30 pages of a book', FALSE),
+--        ('Reply to work emails', TRUE);
+--
+-- -- Create 'users' table inside 'todo' schema
+-- CREATE TABLE todo.users
+-- (
+--     id            SERIAL PRIMARY KEY,
+--     username      VARCHAR(50) UNIQUE  NOT NULL,
+--     email         VARCHAR(100) UNIQUE NOT NULL,
+--     password_hash VARCHAR(255)        NOT NULL,
+--     created_at    TIMESTAMP WITH TIME ZONE     DEFAULT CURRENT_TIMESTAMP,
+--     enabled       BOOLEAN             NOT NULL DEFAULT TRUE
+-- );
+--
+-- -- Optional: insert a test user (password should be hashed in your app)
+-- INSERT INTO todo.users (username, email, password_hash)
+-- VALUES ('testuser', 'test@example.com', 'hashed_password_here');

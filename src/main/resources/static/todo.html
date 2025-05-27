@@ -45,6 +45,7 @@
             box-shadow: 0 32px 64px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
             animation: slideIn 0.8s cubic-bezier(0.23, 1, 0.320, 1);
+            position: relative;
         }
 
         @keyframes slideIn {
@@ -58,6 +59,14 @@
             }
         }
 
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
         h1 {
             font-size: 2.5rem;
             font-weight: 700;
@@ -65,8 +74,30 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 32px;
             text-align: center;
+            flex: 1;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(248, 113, 113, 0.3);
         }
 
         .task-list {
@@ -274,6 +305,12 @@
                 font-size: 2rem;
             }
 
+            .logout-btn {
+                position: static;
+                margin-bottom: 16px;
+                align-self: flex-end;
+            }
+
             .input-container {
                 flex-direction: column;
             }
@@ -348,7 +385,11 @@
 <body>
 
 <div class="wrapper">
-    <h1>TODO List</h1>
+    <a href="/logout" class="logout-btn">Logg ut</a>
+
+    <div class="header">
+        <h1>TODO List</h1>
+    </div>
 
     <div class="task-list" id="task-list">
         <div class="loading">Laster oppgaver...</div>
@@ -358,6 +399,13 @@
         <input type="text" id="new-task" placeholder="Legg til ny oppgave..." />
         <button class="add-button" onclick="addTask()">Legg til</button>
     </div>
+<!--    <div id="delete-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); justify-content:center; align-items:center; z-index:1000;">-->
+<!--        <div style="background:white; padding:32px 24px; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,0.2); text-align:center; min-width:260px;">-->
+<!--            <p style="margin-bottom:24px; font-size:1.1rem;">Are you sure you want to delete this task?</p>-->
+<!--            <button id="modal-confirm" style="background:linear-gradient(135deg,#f87171,#ef4444);color:white;border:none;border-radius:8px;padding:10px 20px;font-weight:600;margin-right:12px;cursor:pointer;">Delete</button>-->
+<!--            <button id="modal-cancel" style="background:#e5e7eb;color:#374151;border:none;border-radius:8px;padding:10px 20px;font-weight:600;cursor:pointer;">Cancel</button>-->
+<!--        </div>-->
+<!--    </div>-->
 </div>
 
 <script>
@@ -520,6 +568,38 @@
             alert('Noe gikk galt ved sletting av oppgave');
         }
     }
+
+    // let taskToDelete = null;
+    //
+    // function showDeleteModal(taskId) {
+    //     taskToDelete = taskId;
+    //     document.getElementById('delete-modal').style.display = 'flex';
+    // }
+    //
+    // function hideDeleteModal() {
+    //     document.getElementById('delete-modal').style.display = 'none';
+    //     taskToDelete = null;
+    // }
+    //
+    // document.getElementById('modal-cancel').onclick = hideDeleteModal;
+    //
+    // document.getElementById('modal-confirm').onclick = async function() {
+    //     if (!taskToDelete) return;
+    //     try {
+    //         const response = await fetch(`${apiUrl}/${taskToDelete}`, { method: 'DELETE' });
+    //         if (!response.ok) throw new Error('Kunne ikke slette oppgave');
+    //         fetchTasks();
+    //     } catch (error) {
+    //         console.error(error);
+    //         alert('Noe gikk galt ved sletting av oppgave');
+    //     }
+    //     hideDeleteModal();
+    // };
+
+    // Replace in your task rendering:
+    // btnDelete.onclick = () => {
+    //     showDeleteModal(task.id);
+    // };
 
     // Handle Enter key in input
     document.getElementById('new-task').addEventListener('keypress', function(e) {

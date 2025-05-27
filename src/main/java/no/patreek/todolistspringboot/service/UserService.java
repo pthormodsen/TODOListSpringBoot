@@ -34,6 +34,7 @@ public class UserService {
         // Opprett ny bruker
         String hashedPassword = passwordEncoder.encode(rawPassword);
         User user = new User(username, email, hashedPassword);
+        user.setEnabled(true); // Legg til denne linjen
         return userRepository.save(user);
     }
 

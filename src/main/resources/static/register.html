@@ -99,9 +99,9 @@
 <div class="wrapper">
     <h2>Registrer ny bruker</h2>
     <form id="register-form">
-        <input type="text" name="username" placeholder="Brukernavn" required />
-        <input type="email" name="email" placeholder="E-post" required />
-        <input type="password" name="password" placeholder="Passord" required minlength="6" />
+        <input type="text" id="username" name="username" placeholder="Brukernavn" required />
+        <input type="email" id="email" name="email" placeholder="E-post" required />
+        <input type="password" id="password" name="password" placeholder="Passord" required minlength="6" />
         <button type="submit">Registrer</button>
     </form>
     <div class="message" id="message"></div>
@@ -119,33 +119,29 @@
         message.textContent = '';
 
         const formData = new FormData(form);
-        const data = {
-            username: formData.get('username'),
-            email: formData.get('email'),
-            password: formData.get('password')
-        };
+        const username = formData.get('username');
+        const email = formData.get('email');
+        const password = formData.get('password');
 
         try {
-            const response = await fetch('/api/auth/register', {
+            const response = await fetch('/api/users/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
+                body: JSON.stringify({ username, email, password })
             });
 
-            const result = await response.text(); // Backend returnerer string, ikke JSON
+            const result = await response.json();
 
             if (response.ok) {
                 message.style.color = 'green';
-                message.textContent = result;
+                message.textContent = result.message;
                 form.reset();
-
-                // Redirect til login etter 2 sekunder
                 setTimeout(() => {
                     window.location.href = '/index.html';
                 }, 2000);
             } else {
                 message.style.color = 'red';
-                message.textContent = result;
+                message.textContent = result.error;
             }
         } catch (error) {
             message.style.color = 'red';
