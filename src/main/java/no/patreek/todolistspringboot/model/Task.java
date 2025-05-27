@@ -2,6 +2,8 @@ package no.patreek.todolistspringboot.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(schema ="todo", name ="task")
 public class Task {
@@ -12,6 +14,7 @@ public class Task {
 
     private String description;
     private boolean completed;
+    private LocalDate dueDate;
 
     @ManyToOne//(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -30,12 +33,27 @@ public class Task {
         this.user = user;
     }
 
+    public Task(String description, LocalDate dueDate, User user) {
+        this.description = description;
+        this.dueDate = dueDate;
+        this.completed = false;
+        this.user = user;
+    }
+
     public Task(String description, boolean completed) {
         this.description = description;
         this.completed = completed;
     }
 
     // Gettere og settere
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
 
     public Long getId() {
         return id;

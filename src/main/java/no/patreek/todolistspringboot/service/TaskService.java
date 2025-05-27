@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,9 +31,15 @@ public class TaskService {
                 .orElseThrow(() -> new RuntimeException("Bruker ikke funnet: " + username));
     }
 
-    public Task addTask(String description) {
+//    public Task addTask(String description) {
+//        User currentUser = getCurrentUser();
+//        Task task = new Task(description, currentUser);
+//        return taskRepository.save(task);
+//    }
+
+    public Task addTask(String description, LocalDate dueDate) {
         User currentUser = getCurrentUser();
-        Task task = new Task(description, currentUser);
+        Task task = new Task(description, dueDate, currentUser);
         return taskRepository.save(task);
     }
 

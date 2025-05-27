@@ -33,3 +33,5 @@ build/
 .vscode/
 
 .env
+**/todo2.html
+
