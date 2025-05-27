@@ -17,7 +17,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    // DTO for innkommende register-forespørsel
     public static class RegisterRequest {
         public String username;
         public String email;

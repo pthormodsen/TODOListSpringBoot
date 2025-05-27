@@ -38,6 +38,4 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // Spring Security håndterer login via CustomUserDetailsService
-    // Ingen behov for egen login-metode
 }

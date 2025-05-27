@@ -31,11 +31,6 @@ public class TaskService {
                 .orElseThrow(() -> new RuntimeException("Bruker ikke funnet: " + username));
     }
 
-//    public Task addTask(String description) {
-//        User currentUser = getCurrentUser();
-//        Task task = new Task(description, currentUser);
-//        return taskRepository.save(task);
-//    }
 
     public Task addTask(String description, LocalDate dueDate) {
         User currentUser = getCurrentUser();

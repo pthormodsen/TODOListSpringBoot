@@ -462,62 +462,6 @@
         }
     }
 
-    // function createTaskElement(task, index) {
-    //     const div = document.createElement('div');
-    //     div.className = 'task-item';
-    //     div.style.animationDelay = `${index * 0.1}s`;
-    //
-    //     // Content container
-    //     const contentDiv = document.createElement('div');
-    //     contentDiv.className = 'task-content';
-    //
-    //     const span = document.createElement('span');
-    //     span.className = 'task-name';
-    //     span.textContent = `${task.completed ? '✓' : '□'} ${task.description}`;
-    //     if (task.completed) span.style.textDecoration = 'line-through';
-    //
-    //     // Due date
-    //     if (task.dueDate) {
-    //         const dateDiv = document.createElement('div');
-    //         dateDiv.className = 'due-date';
-    //         dateDiv.textContent = `Frist: ${formatDate(task.dueDate)}`;
-    //         contentDiv.appendChild(span);
-    //         contentDiv.appendChild(dateDiv);
-    //     } else {
-    //         contentDiv.appendChild(span);
-    //     }
-    //
-    //     // Editable description
-    //     span.contentEditable = true;
-    //     span.onblur = () => {
-    //         const newText = span.textContent.replace(/^✓ |^□ /, '').trim();
-    //         if (newText !== task.description) {
-    //             updateTaskDescription(task.id, newText);
-    //         }
-    //     };
-    //
-    //     // Actions container
-    //     const actionsDiv = document.createElement('div');
-    //     actionsDiv.className = 'task-actions';
-    //
-    //     const btnDone = document.createElement('button');
-    //     btnDone.textContent = task.completed ? 'Angre' : 'Ferdig';
-    //     btnDone.onclick = () =>
-    //         task.completed ? markTaskUndone(task.id) : markTaskDone(task.id);
-    //
-    //     const btnDelete = document.createElement('button');
-    //     btnDelete.textContent = 'Slett';
-    //     btnDelete.onclick = () => deleteTask(task.id);
-    //
-    //     actionsDiv.appendChild(btnDone);
-    //     actionsDiv.appendChild(btnDelete);
-    //
-    //     div.appendChild(contentDiv);
-    //     div.appendChild(actionsDiv);
-    //
-    //     return div;
-    // }
-
     function createTaskElement(task, index) {
         const div = document.createElement('div');
         div.className = 'task-item';

@@ -47,6 +47,10 @@ public class Task {
 
     // Gettere og settere
 
+    public String getTitle() {
+        return description;
+    }
+
     public LocalDate getDueDate() {
         return dueDate;
     }

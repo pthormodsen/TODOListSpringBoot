@@ -26,12 +26,6 @@ public class TaskController {
         return taskService.getTasks();
     }
 
-//    @PostMapping
-//    public ResponseEntity<Task> createTask(@RequestBody Task newTask) {
-//        Task savedTask = taskService.addTask(newTask.getDescription());
-//        return ResponseEntity.ok(savedTask);
-//    }
-
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody Map<String, String> body) {
         String description = body.get("description");
