@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8" />
+    <title>TODO List</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.05"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 480px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 32px;
+            border-radius: 24px;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: slideIn 0.8s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .task-list {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 24px;
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 20px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .task-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .task-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 3px;
+        }
+
+        .task-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 3px;
+        }
+
+        .task-list::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6a4190);
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: taskSlideIn 0.5s ease-out;
+        }
+
+        @keyframes taskSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .task-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(102, 126, 234, 0.2);
+        }
+
+        .task-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .task-name {
+            flex-grow: 1;
+            font-size: 1rem;
+            color: #374151;
+            line-height: 1.5;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            outline: none;
+            border: 2px solid transparent;
+            background: transparent;
+        }
+
+        .task-name:focus {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .task-name[style*="line-through"] {
+            opacity: 0.6;
+            color: #9ca3af;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 16px;
+            cursor: pointer;
+            margin-left: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Different button styles */
+        .task-item button:first-of-type {
+            background: linear-gradient(135deg, #34d399, #10b981);
+        }
+
+        .task-item button:first-of-type:hover {
+            box-shadow: 0 8px 20px rgba(52, 211, 153, 0.3);
+        }
+
+        .task-item button:last-of-type {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+        }
+
+        .task-item button:last-of-type:hover {
+            box-shadow: 0 8px 20px rgba(248, 113, 113, 0.3);
+        }
+
+        .input-container {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-1px);
+        }
+
+        input[type="text"]::placeholder {
+            color: #9ca3af;
+            font-weight: 400;
+        }
+
+        .add-button {
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            font-size: 1rem;
+        }
+
+        .add-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Responsive design */
+        @media (max-width: 640px) {
+            .wrapper {
+                margin: 10px;
+                padding: 24px;
+                width: calc(100% - 20px);
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .input-container {
+                flex-direction: column;
+            }
+
+            .add-button {
+                width: 100%;
+            }
+
+            .task-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .task-name {
+                margin-bottom: 8px;
+            }
+
+            .task-item div:last-child {
+                display: flex;
+                gap: 8px;
+                justify-content: flex-end;
+            }
+
+            button {
+                margin-left: 0;
+                flex: 1;
+            }
+        }
+
+        /* Loading state */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+            color: #9ca3af;
+        }
+
+        .loading::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e5e7eb;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: #9ca3af;
+        }
+
+        .empty-state::before {
+            content: '📝';
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <h1>TODO List</h1>
+
+    <div class="task-list" id="task-list">
+        <div class="loading">Laster oppgaver...</div>
+    </div>
+
+    <div class="input-container">
+        <input type="text" id="new-task" placeholder="Legg til ny oppgave..." />
+        <button class="add-button" onclick="addTask()">Legg til</button>
+    </div>
+</div>
+
+<script>
+    const apiUrl = '/tasks';
+
+    // Hent og vis tasks
+    async function fetchTasks() {
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error('Kunne ikke hente oppgaver');
+            const tasks = await response.json();
+
+            const list = document.getElementById('task-list');
+
+            if (tasks.length === 0) {
+                list.innerHTML = '<div class="empty-state">Ingen oppgaver ennå. Legg til din første oppgave!</div>';
+                return;
+            }
+
+            list.innerHTML = '';
+
+            tasks.forEach((task, index) => {
+                const div = document.createElement('div');
+                div.className = 'task-item';
+                div.style.animationDelay = `${index * 0.1}s`;
+
+                const span = document.createElement('span');
+                span.className = 'task-name';
+                span.textContent = task.description;
+
+                // Hvis oppgaven er fullført, vises den med en ✓ og gjennomstreking
+                if(task.completed) {
+                    span.style.textDecoration = 'line-through';
+                    span.textContent = '✓ ' + span.textContent;
+                } else {
+                    span.textContent = '□ ' + span.textContent;
+                }
+
+                // Knapper
+                const btnDone = document.createElement('button');
+                btnDone.textContent = task.completed ? 'Angre' : 'Ferdig';
+                btnDone.onclick = () => {
+                    if(task.completed) {
+                        markTaskUndone(task.id);
+                    } else {
+                        markTaskDone(task.id);
+                    }
+                };
+
+                const btnDelete = document.createElement('button');
+                btnDelete.textContent = 'Slett';
+                btnDelete.onclick = () => {
+                    deleteTask(task.id);
+                };
+
+                // Valgfritt: Endre beskrivelse ved klikk
+                span.contentEditable = true;
+                span.onblur = () => {
+                    const newDescription = span.textContent.replace(/^✓ |^□ /, '').trim();
+                    if(newDescription !== task.description) {
+                        updateTaskDescription(task.id, newDescription);
+                    }
+                };
+
+                div.appendChild(span);
+                div.appendChild(btnDone);
+                div.appendChild(btnDelete);
+                list.appendChild(div);
+            });
+        } catch (error) {
+            console.error(error);
+            const list = document.getElementById('task-list');
+            list.innerHTML = '<div class="empty-state">Noe gikk galt ved lasting av oppgaver</div>';
+        }
+    }
+
+    // Legg til ny task
+    async function addTask() {
+        const input = document.getElementById('new-task');
+        const taskDescription = input.value.trim();
+
+        if (!taskDescription) {
+            input.focus();
+            return;
+        }
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({description: taskDescription})
+            });
+
+            if (!response.ok) throw new Error('Kunne ikke legge til oppgave');
+
+            input.value = '';
+            fetchTasks();
+        } catch (error) {
+            console.error(error);
+            alert('Noe gikk galt ved opprettelse av oppgave');
+        }
+    }
+
+    // Marker oppgave som ferdig
+    async function markTaskDone(id) {
+        try {
+            const response = await fetch(`${apiUrl}/${id}/done`, {
+                method: 'PUT'
+            });
+            if (!response.ok) throw new Error('Kunne ikke markere som ferdig');
+            fetchTasks();
+        } catch (error) {
+            console.error(error);
+            alert('Noe gikk galt ved markering av oppgave som ferdig');
+        }
+    }
+
+    // Marker oppgave som ikke ferdig
+    async function markTaskUndone(id) {
+        try {
+            const response = await fetch(`${apiUrl}/${id}/undone`, {
+                method: 'PUT'
+            });
+            if (!response.ok) throw new Error('Kunne ikke markere som ikke ferdig');
+            fetchTasks();
+        } catch (error) {
+            console.error(error);
+            alert('Noe gikk galt ved angre ferdig');
+        }
+    }
+
+    // Oppdater beskrivelse
+    async function updateTaskDescription(id, newDescription) {
+        try {
+            const response = await fetch(`${apiUrl}/${id}`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({description: newDescription})
+            });
+            if (!response.ok) throw new Error('Kunne ikke oppdatere beskrivelse');
+            fetchTasks();
+        } catch (error) {
+            console.error(error);
+            alert('Noe gikk galt ved oppdatering av oppgave');
+        }
+    }
+
+    // Slett oppgave
+    async function deleteTask(id) {
+        if (!confirm('Er du sikker på at du vil slette oppgaven?')) return;
+
+        try {
+            const response = await fetch(`${apiUrl}/${id}`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) throw new Error('Kunne ikke slette oppgave');
+            fetchTasks();
+        } catch (error) {
+            console.error(error);
+            alert('Noe gikk galt ved sletting av oppgave');
+        }
+    }
+
+    // Handle Enter key in input
+    document.getElementById('new-task').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addTask();
+        }
+    });
+
+    // Last inn oppgaver ved sideinnlasting
+    fetchTasks();
+</script>
+
+</body>
+</html>
