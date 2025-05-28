@@ -261,9 +261,25 @@
 
         .input-container {
             display: flex;
-            gap: 12px;
+            flex-direction: column;
+            gap: 10px;
             width: 100%;
+        }
+
+        .input-row {
+            display: flex;
+            justify-content: center;
             align-items: center;
+            gap: 16px;
+            margin-top: 10px;
+        }
+
+        .input-row input[type="date"],
+        .input-row .add-button {
+            width: 180px;
+            height: 45px;
+            box-sizing: border-box;
+            font-size: 16px;
         }
 
         input[type="text"] {
@@ -338,6 +354,26 @@
             .input-container {
                 flex-direction: column;
                 gap: 10px;
+            }
+
+            .input-row {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 32px;
+                width: auto;
+                margin: 0 auto;
+            }
+            input[type="date"], .add-button {
+                min-width: unset;
+                width: auto;
+            }
+
+            @media (max-width: 640px) {
+                .input-row {
+                    flex-direction: column;
+                    gap: 10px;
+                }
             }
 
             input[type="text"],
@@ -424,8 +460,10 @@
 
     <div class="input-container">
         <input type="text" id="new-task" placeholder="Legg til ny oppgave..." />
-        <input type="date" id="new-task-dueDate" />
-        <button class="add-button" onclick="addTask()">Legg til</button>
+        <div class="input-row">
+            <input type="date" id="new-task-dueDate" />
+            <button class="add-button" onclick="addTask()">Legg til</button>
+        </div>
     </div>
     <!--
     <div id="delete-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); justify-content:center; align-items:center; z-index:1000;">
