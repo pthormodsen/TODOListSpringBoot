@@ -57,7 +57,7 @@ public class TaskService {
 
     public List<Task> getTasks() {
         User currentUser = getCurrentUser();
-        return taskRepository.findByUserOrderByCompletedAscDescriptionAsc(currentUser);
+        return taskRepository.findByUserOrderByCompletedAscDueDateAsc(currentUser);
     }
 
     public void markTaskUndoneById(Long id) {

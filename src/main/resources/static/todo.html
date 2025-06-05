@@ -3,460 +3,23 @@
 <head>
     <meta charset="UTF-8" />
     <title>TODO List</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.05"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            pointer-events: none;
-        }
-
-        .wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 480px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 32px;
-            border-radius: 24px;
-            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            animation: slideIn 0.8s cubic-bezier(0.23, 1, 0.320, 1);
-            position: relative;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(30px) scale(0.95);}
-            to { opacity: 1; transform: translateY(0) scale(1);}
-        }
-
-        .header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 32px;
-        }
-
-        h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-align: center;
-            flex: 1;
-        }
-
-        .logout-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #f87171, #ef4444);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(248, 113, 113, 0.3);
-        }
-
-        .task-list {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            padding: 24px;
-            max-height: 400px;
-            overflow-y: auto;
-            border-radius: 20px;
-            width: 100%;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            margin-bottom: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .task-list::-webkit-scrollbar { width: 6px; }
-        .task-list::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 3px; }
-        .task-list::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #667eea, #764ba2);}
-        .task-list::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #5a6fd8, #6a4190); }
-
-        .task-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 16px;
-            padding: 16px 20px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 16px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: taskSlideIn 0.5s ease-out;
-        }
-
-        @keyframes taskSlideIn {
-            from { opacity: 0; transform: translateX(-20px);}
-            to { opacity: 1; transform: translateX(0);}
-        }
-
-        .task-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            background: rgba(255, 255, 255, 0.95);
-            border-color: rgba(102, 126, 234, 0.2);
-        }
-
-        .task-item:last-child { margin-bottom: 0; }
-
-        .task-content {
-            flex: 1 1 0;
-            min-width: 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .task-status {
-            font-size: 1.2rem;
-            color: #667eea;
-            flex-shrink: 0;
-            margin-right: 4px;
-            user-select: none;
-        }
-
-        .task-name {
-            flex: 1 1 0;
-            min-width: 0;
-            font-size: 1rem;
-            color: #374151;
-            line-height: 1.5;
-            padding: 8px 12px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            outline: none;
-            border: 2px solid transparent;
-            background: transparent;
-            word-break: break-word;
-            white-space: pre-wrap;
-        }
-
-        .task-name:focus {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .task-name[style*="line-through"] {
-            opacity: 0.6;
-            color: #9ca3af;
-        }
-
-        .due-date {
-            font-size: 0.85rem;
-            color: #6b7280;
-            padding: 4px 8px;
-            border-radius: 6px;
-            background: rgba(102, 126, 234, 0.1);
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-
-        .task-item:hover .due-date {
-            background: rgba(102, 126, 234, 0.2);
-        }
-
-        .task-actions {
-            display: flex;
-            gap: 8px;
-            flex-shrink: 0;
-            align-items: center;
-        }
-
-        button,
-        .add-button {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 10px 16px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        button::before,
-        .add-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        button:hover::before,
-        .add-button:hover::before {
-            left: 100%;
-        }
-
-        button:hover,
-        .add-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        button:active,
-        .add-button:active {
-            transform: translateY(0);
-        }
-
-        /* Different button styles for task actions */
-        .task-item button:first-of-type {
-            background: linear-gradient(135deg, #34d399, #10b981);
-        }
-
-        .task-item button:first-of-type:hover {
-            box-shadow: 0 8px 20px rgba(52, 211, 153, 0.3);
-        }
-
-        .task-item button:last-of-type {
-            background: linear-gradient(135deg, #f87171, #ef4444);
-        }
-
-        .task-item button:last-of-type:hover {
-            box-shadow: 0 8px 20px rgba(248, 113, 113, 0.3);
-        }
-
-        .input-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-        }
-
-        .input-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 16px;
-            margin-top: 10px;
-        }
-
-        .input-row input[type="date"],
-        .input-row .add-button {
-            width: 180px;
-            height: 45px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            padding: 16px 20px;
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            border-radius: 16px;
-            font-size: 1rem;
-            background: rgba(255, 255, 255, 0.9);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            outline: none;
-            min-width: 0;
-        }
-
-        input[type="text"]:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-            background: rgba(255, 255, 255, 1);
-            transform: translateY(-1px);
-        }
-
-        input[type="text"]::placeholder {
-            color: #9ca3af;
-            font-weight: 400;
-        }
-
-        input[type="date"] {
-            padding: 16px 20px;
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            border-radius: 16px;
-            font-size: 1rem;
-            background: rgba(255, 255, 255, 0.9);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            outline: none;
-            color: #374151;
-            min-width: 150px;
-            flex-shrink: 0;
-        }
-
-        input[type="date"]:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-            background: rgba(255, 255, 255, 1);
-            transform: translateY(-1px);
-        }
-
-        .add-button {
-            border-radius: 12px;
-            padding: 10px 16px;
-            font-size: 1rem;
-            flex-shrink: 0;
-            min-width: 100px;
-        }
-
-        /* Responsive design */
-        @media (max-width: 640px) {
-            .wrapper {
-                margin: 10px;
-                padding: 24px;
-                width: calc(100% - 20px);
-            }
-
-            h1 { font-size: 1.8rem; }
-
-            .logout-btn {
-                position: static;
-                margin-bottom: 16px;
-                align-self: flex-end;
-                width: 100%;
-            }
-
-            .input-container {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .input-row {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 32px;
-                width: auto;
-                margin: 0 auto;
-            }
-            input[type="date"], .add-button {
-                min-width: unset;
-                width: auto;
-            }
-
-            @media (max-width: 640px) {
-                .input-row {
-                    flex-direction: column;
-                    gap: 10px;
-                }
-            }
-
-            input[type="text"],
-            input[type="date"],
-            .add-button {
-                width: 100%;
-            }
-
-            .task-item {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 12px;
-            }
-
-            .task-content {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 6px;
-            }
-
-            .task-actions {
-                justify-content: flex-end;
-                width: 100%;
-            }
-
-            .task-actions button {
-                flex: 1;
-            }
-        }
-
-        /* Loading state */
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100px;
-            color: #9ca3af;
-        }
-
-        .loading::after {
-            content: '';
-            width: 20px;
-            height: 20px;
-            border: 2px solid #e5e7eb;
-            border-top: 2px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg);}
-            100% { transform: rotate(360deg);}
-        }
-
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 48px 24px;
-            color: #9ca3af;
-        }
-
-        .empty-state::before {
-            content: '📝';
-            font-size: 3rem;
-            display: block;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/todo.css">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 </head>
 <body>
 
-<div class="wrapper">
-    <a href="/logout" class="logout-btn">Logg ut</a>
+<div class="container">
+    <div class="todo-section">
+        <a href="/logout" class="logout-btn">Logg ut</a>
 
-    <div class="header">
-        <h1>TODO List</h1>
-    </div>
+        <div class="header">
+            <h1>TODO List</h1>
+        </div>
 
-    <div class="task-list" id="task-list">
-        <div class="loading">Laster oppgaver...</div>
-    </div>
+        <div class="task-list" id="task-list">
+            <div class="loading">Laster oppgaver...</div>
+        </div>
 
     <div class="input-container">
         <input type="text" id="new-task" placeholder="Legg til ny oppgave..." />
@@ -464,16 +27,16 @@
             <input type="date" id="new-task-dueDate" />
             <button class="add-button" onclick="addTask()">Legg til</button>
         </div>
-    </div>
-    <!--
-    <div id="delete-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); justify-content:center; align-items:center; z-index:1000;">
-        <div style="background:white; padding:32px 24px; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,0.2); text-align:center; min-width:260px;">
-            <p style="margin-bottom:24px; font-size:1.1rem;">Are you sure you want to delete this task?</p>
-            <button id="modal-confirm" style="background:linear-gradient(135deg,#f87171,#ef4444);color:white;border:none;border-radius:8px;padding:10px 20px;font-weight:600;margin-right:12px;cursor:pointer;">Delete</button>
-            <button id="modal-cancel" style="background:#e5e7eb;color:#374151;border:none;border-radius:8px;padding:10px 20px;font-weight:600;cursor:pointer;">Cancel</button>
+      </div>
+        <div class="calenderButton">
+            <button class="show-calendar-btn" onclick="toggleCalendar()" style="margin-bottom:16px;">Show/Hide Calendar</button>
         </div>
     </div>
-    -->
+
+    <div class="calendar-section hidden">
+        <h2>Kalender</h2>
+        <div id="calendar"></div>
+    </div>
 </div>
 
 <script>
@@ -494,6 +57,9 @@
                 const taskElement = createTaskElement(task, index);
                 list.appendChild(taskElement);
             });
+
+            // Update calendar after fetching tasks
+            renderCalendar();
         } catch (error) {
             console.error(error);
             list.innerHTML = '<div class="empty-state">Noe gikk galt ved lasting av oppgaver</div>';
@@ -645,9 +211,72 @@
             const response = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
             if (!response.ok) throw new Error('Kunne ikke slette oppgave');
             fetchTasks();
+            renderCalendar();
         } catch (error) {
             console.error(error);
             alert('Noe gikk galt ved sletting av oppgave');
+        }
+    }
+
+    let calendar;
+
+    function toggleCalendar() {
+        const calSection = document.querySelector('.calendar-section');
+        const container = document.querySelector('.container');
+        calSection.classList.toggle('hidden');
+        container.classList.toggle('calendar-hidden');
+        if (!calSection.classList.contains('hidden') && calendar) {
+            setTimeout(() => calendar.render(), 10); // Ensure DOM is updated before rendering
+        }
+    }
+
+    async function renderCalendar() {
+        try {
+            const response = await fetch(apiUrl);
+            const tasks = await response.json();
+            const events = tasks
+                .filter(task => task.dueDate && !task.completed)
+                .map(task => ({
+                    title: task.description,
+                    start: task.dueDate,
+                    allDay: true,
+                    extendedProps: {
+                        description: task.description
+                    }
+                }));
+
+            const calendarSection = document.querySelector('.calendar-section');
+            const calendarEl = document.getElementById('calendar');
+
+            if (events.length === 0) {
+                calendarSection.classList.add('hidden');
+            } else {
+                calendarSection.classList.remove('hidden');
+            }
+
+            if (calendar) {
+                calendar.removeAllEvents();
+                calendar.addEventSource(events);
+            } else {
+                calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    locale: 'no',
+                    events: events,
+                    height: 'auto',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,dayGridWeek'
+                    },
+                    eventDidMount: function(info) {
+                        // Set the native title attribute for browser tooltip
+                        info.el.setAttribute('title', info.event.extendedProps.description);
+                    }
+                });
+                calendar.render();
+            }
+        } catch (error) {
+            console.error('Error rendering calendar:', error);
         }
     }
 
@@ -657,6 +286,7 @@
         }
     });
 
+    // Initialize
     fetchTasks();
 </script>
 
