@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>TODO List</title>
+<<<<<<< Updated upstream
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -408,34 +409,49 @@
             opacity: 0.5;
         }
     </style>
+=======
+    <link rel="stylesheet" href="/css/todo.css">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+>>>>>>> Stashed changes
 </head>
 <body>
 
-<div class="wrapper">
-    <a href="/logout" class="logout-btn">Logg ut</a>
+<div class="container">
+    <div class="todo-section">
+        <a href="/logout" class="logout-btn">Logg ut</a>
 
-    <div class="header">
-        <h1>TODO List</h1>
-    </div>
+        <div class="header">
+            <h1>TODO List</h1>
+        </div>
 
-    <div class="task-list" id="task-list">
-        <div class="loading">Laster oppgaver...</div>
-    </div>
+        <div class="task-list" id="task-list">
+            <div class="loading">Laster oppgaver...</div>
+        </div>
 
+<<<<<<< Updated upstream
     <div class="input-container">
         <input type="text" id="new-task" placeholder="Legg til ny oppgave..." />
         <input type="date" id="new-task-dueDate" />
         <button class="add-button" onclick="addTask()">Legg til</button>
-    </div>
-    <!--
-    <div id="delete-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); justify-content:center; align-items:center; z-index:1000;">
-        <div style="background:white; padding:32px 24px; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,0.2); text-align:center; min-width:260px;">
-            <p style="margin-bottom:24px; font-size:1.1rem;">Are you sure you want to delete this task?</p>
-            <button id="modal-confirm" style="background:linear-gradient(135deg,#f87171,#ef4444);color:white;border:none;border-radius:8px;padding:10px 20px;font-weight:600;margin-right:12px;cursor:pointer;">Delete</button>
-            <button id="modal-cancel" style="background:#e5e7eb;color:#374151;border:none;border-radius:8px;padding:10px 20px;font-weight:600;cursor:pointer;">Cancel</button>
+=======
+        <div class="input-container">
+            <input type="text" id="new-task" placeholder="Legg til ny oppgave..." />
+            <div class="input-row">
+                <input type="date" id="new-task-dueDate" />
+                <button class="add-button" onclick="addTask()">Legg til</button>
+            </div>
         </div>
+        <div class="calenderButton">
+            <button class="show-calendar-btn" onclick="toggleCalendar()" style="margin-bottom:16px;">Show/Hide Calendar</button>
+        </div>
+>>>>>>> Stashed changes
     </div>
-    -->
+
+    <div class="calendar-section hidden">
+        <h2>Kalender</h2>
+        <div id="calendar"></div>
+    </div>
 </div>
 
 <script>
@@ -456,6 +472,9 @@
                 const taskElement = createTaskElement(task, index);
                 list.appendChild(taskElement);
             });
+
+            // Update calendar after fetching tasks
+            renderCalendar();
         } catch (error) {
             console.error(error);
             list.innerHTML = '<div class="empty-state">Noe gikk galt ved lasting av oppgaver</div>';
@@ -607,9 +626,72 @@
             const response = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
             if (!response.ok) throw new Error('Kunne ikke slette oppgave');
             fetchTasks();
+            renderCalendar();
         } catch (error) {
             console.error(error);
             alert('Noe gikk galt ved sletting av oppgave');
+        }
+    }
+
+    let calendar;
+
+    function toggleCalendar() {
+        const calSection = document.querySelector('.calendar-section');
+        const container = document.querySelector('.container');
+        calSection.classList.toggle('hidden');
+        container.classList.toggle('calendar-hidden');
+        if (!calSection.classList.contains('hidden') && calendar) {
+            setTimeout(() => calendar.render(), 10); // Ensure DOM is updated before rendering
+        }
+    }
+
+    async function renderCalendar() {
+        try {
+            const response = await fetch(apiUrl);
+            const tasks = await response.json();
+            const events = tasks
+                .filter(task => task.dueDate && !task.completed)
+                .map(task => ({
+                    title: task.description,
+                    start: task.dueDate,
+                    allDay: true,
+                    extendedProps: {
+                        description: task.description
+                    }
+                }));
+
+            const calendarSection = document.querySelector('.calendar-section');
+            const calendarEl = document.getElementById('calendar');
+
+            if (events.length === 0) {
+                calendarSection.classList.add('hidden');
+            } else {
+                calendarSection.classList.remove('hidden');
+            }
+
+            if (calendar) {
+                calendar.removeAllEvents();
+                calendar.addEventSource(events);
+            } else {
+                calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    locale: 'no',
+                    events: events,
+                    height: 'auto',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,dayGridWeek'
+                    },
+                    eventDidMount: function(info) {
+                        // Set the native title attribute for browser tooltip
+                        info.el.setAttribute('title', info.event.extendedProps.description);
+                    }
+                });
+                calendar.render();
+            }
+        } catch (error) {
+            console.error('Error rendering calendar:', error);
         }
     }
 
@@ -619,6 +701,7 @@
         }
     });
 
+    // Initialize
     fetchTasks();
 </script>
 

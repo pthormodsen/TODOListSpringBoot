@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(schema = "todo", name = "users")
+@Table(name = "users")
 public class User {
 
     @Id

@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
-    List<Task> findByUserOrderByCompletedAscDescriptionAsc(User user);
+    List<Task> findByUserOrderByCompletedAscDueDateAsc(User user);
     List<Task> findByDueDate(LocalDate dueDate);
     Optional<Task> findByIdAndUser(Long id, User user);
     void deleteByIdAndUser(Long id, User user);

@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(schema ="todo", name ="task")
+@Table(name ="task")
 public class Task {
 
     @Id
