@@ -20,7 +20,7 @@ public class TestEmailController {
     @GetMapping("/send-email")
     public String sendTestEmail() {
         emailService.sendReminderEmail(
-                "patrik.thormodsen@gmail.com",
+                "your.mail@here.no",
                 "Test oppgave",
                 LocalDate.now().plusDays(1)
         );

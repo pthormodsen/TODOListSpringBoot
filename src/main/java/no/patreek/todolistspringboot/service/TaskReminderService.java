@@ -19,7 +19,7 @@ public class TaskReminderService {
     @Autowired
     private EmailService emailService;
 
-    @Scheduled(cron = "0 0 12 * * ?") // hver dag kl 08:00
+    @Scheduled(cron = "0 0 12 * * ?") // hver dag kl 12:00
     public void sendDueDateReminders() {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         List<Task> tasksDueTomorrow = taskRepository.findByDueDate(tomorrow);
