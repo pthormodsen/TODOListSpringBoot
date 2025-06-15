@@ -264,18 +264,12 @@
                     events: events,
                     height: 'auto',
                     headerToolbar: {
-                        left: '',
+                        left: 'prev',
                         center: 'title',
-                        right: '',
+                        right: 'next',
                     },
                     firstDay: 1,
-                    // headerToolbar: {
-                    //     left: 'prev,next today',
-                    //     center: 'title',
-                    //     right: 'dayGridMonth,dayGridWeek'
-                    // },
                     eventDidMount: function(info) {
-                        // Set the native title attribute for browser tooltip
                         info.el.setAttribute('title', info.event.extendedProps.description);
                     }
                 });
