@@ -56,6 +56,3 @@ A simple Todo List web application built with Java, Spring Boot, Maven, and Post
 - The backend code is in `src/main/java/no/patreek/todolistspringboot/`
 - The frontend files are in `src/main/resources/static/`
 
-## License
-
-This project is licensed under the MIT License.
