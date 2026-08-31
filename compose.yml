@@ -1,0 +1,27 @@
+services:
+  todo:
+    build: .
+    container_name: todo-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tododb
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    container_name: todo-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tododb
+      POSTGRES_USER: ${SPRING_DATASOURCE_USERNAME}
+      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    volumes:
+      - todo_db_data:/var/lib/postgresql/data
+
+volumes:
+  todo_db_data:
