@@ -7,7 +7,7 @@
 body {
     min-height: 100vh;
     padding: 24px;
-    background: #f3f4f6;
+    background: #a1b9e8;
     color: #111827;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -247,6 +247,7 @@ button:active,
     align-items: center;
     justify-content: center;
     gap: 12px;
+    width: 100%;
 }
 
 input[type="text"],
@@ -274,8 +275,9 @@ input[type="text"] {
 }
 
 input[type="date"] {
-    min-width: 150px;
-    flex-shrink: 0;
+    flex: 0 0 170px;
+    width: 170px;
+    min-width: 170px;
 }
 
 input[type="text"]::placeholder {
