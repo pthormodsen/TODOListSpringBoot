@@ -43,6 +43,7 @@ h1 {
     font-size: 2rem;
     text-align: center;
     flex: 1;
+    margin-left: 80px;
 }
 
 h2 {
@@ -212,10 +213,11 @@ button:active,
 }
 
 .calenderButton {
+    padding: 10px;
     display: flex;
     justify-content: center;
     width: 100%;
-    margin-bottom: 8px;
+
 }
 
 .show-calendar-btn {
@@ -224,11 +226,9 @@ button:active,
 }
 
 .logout-btn {
-    position: absolute;
-    top: 16px;
-    right: 16px;
     text-decoration: none;
     background: #374151;
+    flex-shrink: 0;
 }
 
 .logout-btn:hover {
