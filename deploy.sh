@@ -3,7 +3,7 @@ set -e
 
 echo "=== Deploying TODO application ==="
 
-cd /home/pmt/web/TODOListSpringBoot
+cd /home/pmt/docker/TODOListSpringBoot
 
 echo "=== Pulling latest changes ==="
 git pull --ff-only origin main

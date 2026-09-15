@@ -8,10 +8,11 @@ services:
     environment:
       APP_PROFILE: prod
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tododb
-    ports:
-      - "127.0.0.1:8080:8080"
     depends_on:
       - db
+    networks:
+      - default
+      - cloudflare
 
   db:
     image: postgres:16
@@ -26,3 +27,8 @@ services:
 
 volumes:
   todo_db_data:
+
+networks:
+  cloudflare:
+    external: true
+    name: cloudflare
