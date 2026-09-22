@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())  // Kun for testing, slå på CSRF i produksjon!
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index.html", "/register.html","/api/users/register", "/css/**", "/js/**", "/send-email", "/test").permitAll()
+                        .requestMatchers("/", "/demo", "/index.html", "/todo.html", "/register.html","/api/users/register", "/css/**", "/js/**", "/send-email", "/test").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

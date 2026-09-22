@@ -17,7 +17,10 @@
 
         <div class="header">
             <h1>TODO List</h1>
-            <a href="/logout" class="logout-btn">Logg ut</a>
+            <a href="/logout" class="logout-btn" id="logout-link">Logg ut</a>
+        </div>
+        <div id="demo-banner" class="empty-state" style="display:none; margin-bottom: 16px;">
+            Demo mode uses example tasks in this browser session only.
         </div>
 
         <div class="task-list" id="task-list">
@@ -44,13 +47,61 @@
 
 <script>
     const apiUrl = '/tasks';
+    const isDemoMode = window.location.pathname === '/demo' ||
+        new URLSearchParams(window.location.search).get('demo') === 'true';
+    const demoStorageKey = 'todo.demo.tasks';
+    const demoSeedTasks = [
+        {
+            id: 1,
+            description: "Review today's priorities",
+            completed: false,
+            dueDate: new Date().toISOString().slice(0, 10)
+        },
+        {
+            id: 2,
+            description: 'Schedule project follow-up',
+            completed: false,
+            dueDate: new Date(Date.now() + 86400000).toISOString().slice(0, 10)
+        },
+        {
+            id: 3,
+            description: 'Archive completed notes',
+            completed: true,
+            dueDate: null
+        }
+    ];
+
+    function readDemoTasks() {
+        const storedTasks = sessionStorage.getItem(demoStorageKey);
+        if (storedTasks) {
+            return JSON.parse(storedTasks);
+        }
+        sessionStorage.setItem(demoStorageKey, JSON.stringify(demoSeedTasks));
+        return demoSeedTasks;
+    }
+
+    function writeDemoTasks(tasks) {
+        sessionStorage.setItem(demoStorageKey, JSON.stringify(tasks));
+    }
+
+    async function loadTasks() {
+        if (isDemoMode) {
+            return readDemoTasks();
+        }
+
+        const response = await fetch(apiUrl);
+        if (response.status === 401) {
+            window.location.replace('/index.html');
+            return [];
+        }
+        if (!response.ok) throw new Error('Kunne ikke hente oppgaver');
+        return response.json();
+    }
 
     async function fetchTasks() {
         const list = document.getElementById('task-list');
         try {
-            const response = await fetch(apiUrl);
-            if (!response.ok) throw new Error('Kunne ikke hente oppgaver');
-            const tasks = await response.json();
+            const tasks = await loadTasks();
             list.innerHTML = '';
             if (tasks.length === 0) {
                 list.innerHTML = '<div class="empty-state">Ingen oppgaver ennå. Legg til din første oppgave!</div>';
@@ -151,6 +202,24 @@
         }
 
         try {
+            if (isDemoMode) {
+                const tasks = readDemoTasks();
+                const nextId = Math.max(0, ...tasks.map(task => task.id)) + 1;
+                writeDemoTasks([
+                    ...tasks,
+                    {
+                        id: nextId,
+                        description: taskDescription,
+                        dueDate: dueDateValue || null,
+                        completed: false
+                    }
+                ]);
+                input.value = '';
+                dueDateInput.value = '';
+                fetchTasks();
+                return;
+            }
+
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -173,6 +242,14 @@
 
     async function markTaskDone(id) {
         try {
+            if (isDemoMode) {
+                writeDemoTasks(readDemoTasks().map(task =>
+                    task.id === id ? {...task, completed: true} : task
+                ));
+                fetchTasks();
+                return;
+            }
+
             const response = await fetch(`${apiUrl}/${id}/done`, { method: 'PUT' });
             if (!response.ok) throw new Error('Kunne ikke markere som ferdig');
             fetchTasks();
@@ -184,6 +261,14 @@
 
     async function markTaskUndone(id) {
         try {
+            if (isDemoMode) {
+                writeDemoTasks(readDemoTasks().map(task =>
+                    task.id === id ? {...task, completed: false} : task
+                ));
+                fetchTasks();
+                return;
+            }
+
             const response = await fetch(`${apiUrl}/${id}/undone`, { method: 'PUT' });
             if (!response.ok) throw new Error('Kunne ikke markere som ikke ferdig');
             fetchTasks();
@@ -195,6 +280,14 @@
 
     async function updateTaskDescription(id, newDescription) {
         try {
+            if (isDemoMode) {
+                writeDemoTasks(readDemoTasks().map(task =>
+                    task.id === id ? {...task, description: newDescription} : task
+                ));
+                fetchTasks();
+                return;
+            }
+
             const response = await fetch(`${apiUrl}/${id}`, {
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
@@ -211,6 +304,13 @@
     async function deleteTask(id) {
         if (!confirm('Er du sikker på at du vil slette oppgaven?')) return;
         try {
+            if (isDemoMode) {
+                writeDemoTasks(readDemoTasks().filter(task => task.id !== id));
+                fetchTasks();
+                renderCalendar();
+                return;
+            }
+
             const response = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
             if (!response.ok) throw new Error('Kunne ikke slette oppgave');
             fetchTasks();
@@ -235,8 +335,7 @@
 
     async function renderCalendar() {
         try {
-            const response = await fetch(apiUrl);
-            const tasks = await response.json();
+            const tasks = await loadTasks();
             const events = tasks
                 .filter(task => task.dueDate && !task.completed)
                 .map(task => ({
@@ -288,6 +387,13 @@
             addTask();
         }
     });
+
+    if (isDemoMode) {
+        document.getElementById('demo-banner').style.display = 'block';
+        const logoutLink = document.getElementById('logout-link');
+        logoutLink.textContent = 'Exit demo';
+        logoutLink.href = '/index.html';
+    }
 
     // Initialize
     fetchTasks();

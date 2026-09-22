@@ -24,10 +24,17 @@
     <div class="login-link">
         <a href="/register.html">Har du ikke en konto? Registrer deg her</a>
     </div>
+    <div class="login-link">
+        <a href="/demo">Try demo</a>
+    </div>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const messageDiv = document.getElementById('message');
+
+        if (urlParams.get('demo') === 'true') {
+            window.location.replace('/demo');
+        }
 
         if (urlParams.has('error')) {
             messageDiv.textContent = "Feil brukernavn eller passord";
