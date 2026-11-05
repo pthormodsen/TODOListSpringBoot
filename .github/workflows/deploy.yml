@@ -23,9 +23,9 @@ jobs:
       matrix:
         include:
           - name: backend
-            context: ./backend
+            context:
           - name: frontend
-            context: ./frontend
+            context:
     steps:
       - uses: actions/checkout@v4
 
