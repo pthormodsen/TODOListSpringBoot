@@ -27,7 +27,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 });
 
         System.out.println("Bruker funnet: " + user.getUsername() + ", enabled: " + user.isEnabled());
-        System.out.println("Password hash i database: " + user.getPasswordHash());
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
